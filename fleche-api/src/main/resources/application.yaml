@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/fleche
+    username: postgres
+    password: 15421542
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc.lob.non_contextual_creation: true
+        show_sql: false
+
+server:
+  port: 8085
+
+auth:
+  key:
+    secret: "#flecheApp$"
+
+springdoc:
+  openapi:
+    title: 'Fleche API'
+    description: 'O novo sucesso da galera'
+    version: '1.0.0'

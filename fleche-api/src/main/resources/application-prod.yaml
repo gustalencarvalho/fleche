@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: fleche-api
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/fleche
+    username: fleche
+    password: 15421542
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      max-lifetime: 1800000  # 30 minutos
+      validation-timeout: 3000  # 3 segundos
+      idle-timeout: 600000  # 10 minutos
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate.globally_quoted_identifiers: true
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+      hibernate.jdbc.lob.non_contextual_creation: true
+    show-sql: true
+
+auth:
+  key:
+    secret: "#flecheApp$"

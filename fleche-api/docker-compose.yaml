@@ -1,0 +1,73 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    environment:
+      POSTGRES_DB: fleche
+      POSTGRES_USER: fleche
+      POSTGRES_PASSWORD: 1542
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - fleche-network
+
+  fleche-api:
+    build: .
+    image: fleche-api
+    container_name: fleche-api
+    ports:
+      - "8085:8085"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/fleche
+      SPRING_DATASOURCE_USERNAME: fleche
+      SPRING_DATASOURCE_PASSWORD: 1542
+      SPRING_PROFILES_ACTIVE: prod
+    networks:
+      - fleche-network
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    ports:
+      - "8081:8080"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+    networks:
+      - fleche-network
+
+  fleche-frontend:
+    build:
+      context: /mnt/c/Users/gusta/Documents/fleche-app
+    image: fleche-frontend
+    container_name: fleche-frontend
+    ports:
+      - "8100:8100"
+    depends_on:
+      - fleche-api
+    networks:
+      - fleche-network
+
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: dozzle
+    ports:
+      - "9999:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - fleche-network
+    restart: always
+
+networks:
+  fleche-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  jenkins_home:
