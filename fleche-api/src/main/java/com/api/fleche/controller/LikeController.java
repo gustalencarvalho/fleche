@@ -1,8 +1,8 @@
 package com.api.fleche.controller;
 
 import com.api.fleche.enums.StatusLike;
-import com.api.fleche.model.Like;
 import com.api.fleche.model.dtos.StandardError;
+import com.api.fleche.publisher.representation.LikeRepresentation;
 import com.api.fleche.service.LikeService;
 import com.api.fleche.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,8 +43,8 @@ public class LikeController {
                             schema = @Schema(implementation = StandardError.class)))
     })
     public ResponseEntity<String> darLike(@PathVariable Long originId, @PathVariable Long destinyId, @PathVariable StatusLike status) {
-        Like like = likeService.like(originId, destinyId, status);
-        return ResponseEntity.ok(like.getStatus().name());
+        likeService.like(originId, destinyId, status);
+        return ResponseEntity.ok().build();
     }
 
 }

@@ -1,10 +1,11 @@
 package com.api.fleche.service;
 
 import com.api.fleche.enums.StatusLike;
-import com.api.fleche.model.Like;
 import com.api.fleche.model.User;
 import com.api.fleche.model.exception.UserNotFounException;
-import com.api.fleche.repository.LikeRepository;
+import com.api.fleche.publisher.LikePublisher;
+import com.api.fleche.publisher.representation.LikeRepresentation;
+import com.api.fleche.publisher.representation.UserRepresentation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,47 +15,32 @@ import java.util.Optional;
 @Service
 public class LikeService {
 
-    private final LikeRepository likeRepository;
     private final UserService userService;
+    private final LikePublisher publisher;
 
-    public Like like(Long originId, Long destinyId, StatusLike statusLike) {
+    public void like(Long originId, Long destinyId, StatusLike statusLike) {
         Optional<User> userOrigin = userService.findById(originId);
         Optional<User> userDestiny = userService.findById(destinyId);
-        var like = new Like();
+
+        var userRepresentationOrigin = UserRepresentation.builder()
+                .id(userOrigin.get().getId())
+                .build();
+
+        var userRepresentationDestiny = UserRepresentation.builder()
+                .id(userDestiny.get().getId())
+                .build();
+
+        var like = new LikeRepresentation(
+                userRepresentationOrigin.getId(),
+                userRepresentationDestiny.getId(),
+                statusLike
+        );
 
         if (userOrigin.isEmpty() || userDestiny.isEmpty()) {
             throw new UserNotFounException("User not found");
         }
 
-        Optional<Like> likeExist = likeRepository.findByUserOriginAndUserDestiny(userOrigin.get(), userDestiny.get());
-        if (likeExist.isPresent()) {
-            like = likeExist.get();
-            like.setStatus(statusLike);
-            return likeRepository.save(like);
-        }
-
-        if (statusLike.equals(StatusLike.LIKE) && verifyMatch(userOrigin.get(), userDestiny.get())) {
-            like.setStatus(StatusLike.FLECHE);
-            like.setUserOrigin(userOrigin.get());
-            like.setUserDestiny(userDestiny.get());
-            likeRepository.save(like);
-            return like;
-        }
-        Like newLike = new Like(userOrigin.get(), userDestiny.get(), statusLike);
-        return likeRepository.save(newLike);
-    }
-
-    public boolean verifyMatch(User userOrigin, User userDestiny) {
-        boolean status = likeRepository.existsByUserOriginAndUserDestinyAndStatus(
-                userOrigin,
-                userDestiny,
-                StatusLike.LIKE)
-                ||
-                likeRepository.existsByUserOriginAndUserDestinyAndStatus(
-                        userDestiny,
-                        userOrigin,
-                        StatusLike.LIKE);
-        return status;
+        publisher.publisherLike(like);
     }
 
 }

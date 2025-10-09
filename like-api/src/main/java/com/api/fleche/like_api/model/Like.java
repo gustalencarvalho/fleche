@@ -1,18 +1,16 @@
-package com.api.fleche.model;
+package com.api.fleche.like_api.model;
 
-import com.api.fleche.enums.StatusLike;
+import com.api.fleche.like_api.enums.StatusLike;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Entity
 @Data
+@Entity
 @NoArgsConstructor
-@Table(name = "LIKES", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"user_id_orige", "user_id_destiny"})
-})
+@Table(name = "LIKES")
 public class Like {
 
     @Id
@@ -20,13 +18,9 @@ public class Like {
     @Column(name = "LIKE_ID")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "USER_ID_ORIGIN", nullable = false)
-    private User userOrigin;
+    private Long userOriginId;
 
-    @ManyToOne
-    @JoinColumn(name = "USER_ID_DESTINY", nullable = false)
-    private User userDestiny;
+    private Long userDestinyId;
 
     @Column(name = "STATUS_LIKE", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -35,9 +29,9 @@ public class Like {
     @Column(name = "DATA_LIKE", nullable = false, updatable = false)
     private LocalDateTime dateLike = LocalDateTime.now();
 
-    public Like(User userOrigin, User userDestiny, StatusLike status) {
-        this.userOrigin = userOrigin;
-        this.userDestiny = userDestiny;
+    public Like(Long userOriginId, Long userDestinyId, StatusLike status) {
+        this.userOriginId = userOriginId;
+        this.userDestinyId = userDestinyId;
         this.status = status;
         this.dateLike = LocalDateTime.now();
     }
