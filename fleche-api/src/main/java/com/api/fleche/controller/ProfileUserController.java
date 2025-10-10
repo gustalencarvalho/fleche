@@ -1,17 +1,18 @@
 package com.api.fleche.controller;
 
-import com.api.fleche.model.dtos.ProfileUserDto;
 import com.api.fleche.model.ProfileUser;
+import com.api.fleche.model.dtos.ProfileRegisterRequest;
+import com.api.fleche.model.dtos.ProfileUserDto;
 import com.api.fleche.service.ProfileUserService;
 import com.api.fleche.service.UserService;
-import jakarta.validation.Valid;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -38,11 +39,14 @@ public class ProfileUserController {
         }
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<Void> register(
-            @RequestPart("profile") @Valid ProfileUserDto profileUserDto,
-            @RequestPart(value = "picture", required = false) MultipartFile pic) throws IOException {
-        profileUserService.saveProfile(profileUserDto, pic);
+    @Operation(
+            summary = "Registra novo usuário com foto de perfil",
+            description = "Recebe o JSON de perfil e uma imagem opcional"
+    )
+    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> register(@ModelAttribute ProfileRegisterRequest request) throws IOException {
+        ProfileUserDto dto = new ObjectMapper().readValue(request.getProfile(), ProfileUserDto.class);
+        profileUserService.saveProfile(dto, request.getPicture());
         return ResponseEntity.ok().build();
     }
 

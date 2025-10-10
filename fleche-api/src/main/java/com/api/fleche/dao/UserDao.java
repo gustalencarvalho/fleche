@@ -1,10 +1,10 @@
 package com.api.fleche.dao;
 
+import com.api.fleche.enums.Gender;
+import com.api.fleche.enums.Preferences;
 import com.api.fleche.model.dtos.LoginDto;
 import com.api.fleche.model.dtos.ProfileUserDto;
 import com.api.fleche.model.dtos.UserDataDto;
-import com.api.fleche.enums.Gender;
-import com.api.fleche.enums.Preferences;
 import com.api.fleche.repository.CommandSqlRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -52,7 +52,6 @@ public class UserDao {
                         rs.getString("NOME_BAR")
                 )
         );
-
         return results.isEmpty() ? null : results.get(0);
     }
 
@@ -72,5 +71,4 @@ public class UserDao {
             return null;
         }
     }
-
 }
