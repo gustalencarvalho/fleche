@@ -31,7 +31,7 @@ server:
 
 auth:
   key:
-    secret: "#flecheApp$"
+    secret: "uPzby0R7fAVoP43sGjKd4Z5QzLmFZyvBzk9z8rGxgRs="
 
 springdoc:
   openapi:

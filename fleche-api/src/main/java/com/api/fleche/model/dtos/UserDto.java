@@ -11,11 +11,13 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDto {
 
@@ -40,9 +42,9 @@ public class UserDto {
 
     private UserRole role;
 
-    private Status status;
+    private String status;
 
-    public UserDto(String name, String email, String ddd, String phone, UserRole role, Status status) {
+    public UserDto(String name, String email, String ddd, String phone, UserRole role, String status) {
         this.name = name;
         this.email = email;
         this.ddd = ddd;
@@ -53,7 +55,7 @@ public class UserDto {
 
     @PrePersist
     public void prePersist() {
-        this.status = Status.ACTIVE;
+        this.status = Status.ACTIVE.name();
         this.role = UserRole.USER;
     }
 

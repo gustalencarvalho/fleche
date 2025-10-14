@@ -1,6 +1,8 @@
 package com.api.fleche.infra.security;
 
+import com.api.fleche.model.User;
 import com.api.fleche.repository.UserRepository;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,20 +20,34 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class SecurityFilter extends OncePerRequestFilter {
 
-    private final TokenService tokekService;
+    private final TokenService tokenService;
     private final UserRepository userRepository;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        var token = this.recoverToken(request);
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+
+        String token = this.recoverToken(request);
+
         if (token != null) {
-            var telefone = tokekService.validateToken(token);
-            UserDetails usuario = userRepository.findUserNotProfile(telefone).get();
-            var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
+            DecodedJWT decoded = tokenService.validateToken(token);
+            Long userId = decoded.getClaim("id").asLong();
+            String telefone = decoded.getSubject();
+
+            // Busca o usuário com base no id (ou telefone)
+            UserDetails usuario = userRepository.findByPhone(telefone);
+
+            // Cria autenticação
+            var authentication = new UsernamePasswordAuthenticationToken(
+                    usuario, null, usuario.getAuthorities());
+
+            // Coloca o usuário logado no contexto de segurança
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
+
         filterChain.doFilter(request, response);
     }
+
 
     private String recoverToken(HttpServletRequest request) {
         var authHeader = request.getHeader("Authorization");
@@ -40,4 +56,13 @@ public class SecurityFilter extends OncePerRequestFilter {
         }
         return authHeader.replace("Bearer ", "");
     }
+
+    public static Long getAuthenticationUserId() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !(auth.getPrincipal() instanceof User user)) {
+            return null;
+        }
+        return user.getId();
+    }
+
 }

@@ -20,6 +20,8 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.Optional;
 
+import static com.api.fleche.infra.security.SecurityFilter.getAuthenticationUserId;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -35,14 +37,14 @@ public class UserService {
         userDto.setPassword(encryptedPassword);
         BeanUtils.copyProperties(userDto, user);
         validateRegister(user);
-        var userSave =userRepository.save(user);
+        var userSave= userRepository.save(user);
         return new UserDto(
                 userSave.getName(),
                 userSave.getEmail(),
                 userSave.getDdd(),
                 userSave.getPhone(),
                 userSave.getRole(),
-                userSave.getStatus());
+                userSave.getStatus().name());
     }
 
     public boolean existsByEmail(String email) {
@@ -81,19 +83,21 @@ public class UserService {
 
     @Transactional
     @Modifying
-    public void updateDataUser(UserUpdateDto updateDto, Long id) {
-        var userData = findDataUser(id);
+    public void updateDataUser(UserUpdateDto updateDto) {
+        var userData = findDataUser(getAuthenticationUserId());
         if (updateDto.getPhone() != null) {
-            if (updateDto.getPhone().equals(userData.getPhone()) && userData.getId() != id) {
+            if (updateDto.getPhone().equals(userData.getPhone()) && userData.getId() != getAuthenticationUserId()) {
                 throw new PhoneAlreadyExistsException("Phone already exisits");
             }
         }
+
         if (updateDto.getEmail() != null) {
-            if (updateDto.getEmail().equals(userData.getEmail()) && userData.getId() != id) {
+            if (updateDto.getEmail().equals(userData.getEmail()) && userData.getId() != getAuthenticationUserId()) {
                 throw new EmailAlreadyExistsException("E-mail already exists");
             }
         }
-        User user = findById(id);
+
+        User user = findById(getAuthenticationUserId());
         user.setName(updateDto.getName() != null ? updateDto.getName() : user.getName());
         user.setPhone(updateDto.getPhone() != null ? updateDto.getPhone() : user.getPhone());
         user.setEmail(updateDto.getEmail() != null ? updateDto.getEmail() : user.getEmail());

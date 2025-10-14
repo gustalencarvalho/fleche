@@ -3,8 +3,7 @@ package com.api.fleche.enums;
 public enum Gender {
     HETEROSSEXUAL("HETEROSSEXUAL"),
     TRANSSEXUAL("TRANSSEXUAL"),
-    HOMOSSEXUAL("HOMOSSEXUAL"),
-    BISSEXUAL("BISSEXUAL");
+    ALL("ALL");
 
     private String gender;
 

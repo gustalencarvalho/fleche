@@ -103,9 +103,9 @@ public class UserController {
                             mediaType = APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = StandardError.class)))
     })
-    @PatchMapping("/{id}/update")
-    public ResponseEntity<?> atualizarDados(@RequestBody UserUpdateDto userUpdateDto, @PathVariable Long id) {
-        userService.updateDataUser(userUpdateDto, id);
+    @PatchMapping("/update")
+    public ResponseEntity<?> updateDataUser(@RequestBody UserUpdateDto userUpdateDto) {
+        userService.updateDataUser(userUpdateDto);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
