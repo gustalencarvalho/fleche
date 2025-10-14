@@ -1,5 +1,6 @@
 package com.api.fleche.services.Impl;
 
+import com.api.fleche.model.dtos.LocationDto;
 import com.api.fleche.model.dtos.LocationRegisterDto;
 import com.api.fleche.model.Location;
 import com.api.fleche.repository.LocationRepository;
@@ -25,7 +26,7 @@ class LocationServiceTest {
     @Test
     @DisplayName("Cria cadastro do bar")
     LocationRegisterDto criaCadastroDeUmBarBar(LocationRegisterDto bar) {
-        Location registro = locationService.registerBar(bar);
+        LocationDto registro = locationService.registerBar(bar);
         return bar;
     }
 }

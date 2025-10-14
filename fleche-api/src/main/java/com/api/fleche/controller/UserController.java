@@ -80,9 +80,9 @@ public class UserController {
     })
     @GetMapping("/{id}/picture")
     public ResponseEntity<byte[]> getFoto(@PathVariable Long id) {
-        Optional<User> user = userService.findById(id);
-        if (user.isPresent() && user.get().getProfileUser().getPicture() != null) {
-            byte[] image = user.get().getProfileUser().getPicture();
+        User user = userService.findById(id);
+        if (user.getProfileUser().getPicture() != null) {
+            byte[] image = user.getProfileUser().getPicture();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.IMAGE_JPEG);
             return new ResponseEntity<>(image, headers, HttpStatus.OK);

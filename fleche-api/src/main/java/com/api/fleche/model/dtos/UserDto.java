@@ -42,6 +42,15 @@ public class UserDto {
 
     private Status status;
 
+    public UserDto(String name, String email, String ddd, String phone, UserRole role, Status status) {
+        this.name = name;
+        this.email = email;
+        this.ddd = ddd;
+        this.phone = phone;
+        this.role = role;
+        this.status = status;
+    }
+
     @PrePersist
     public void prePersist() {
         this.status = Status.ACTIVE;

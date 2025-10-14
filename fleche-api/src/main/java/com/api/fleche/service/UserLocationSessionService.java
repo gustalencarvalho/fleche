@@ -1,16 +1,14 @@
 package com.api.fleche.service;
 
 import com.api.fleche.dao.UserLocationSessionDao;
+import com.api.fleche.enums.StatusUserLocation;
 import com.api.fleche.model.Location;
 import com.api.fleche.model.User;
+import com.api.fleche.model.UserLocationSession;
 import com.api.fleche.model.dtos.LocationDto;
 import com.api.fleche.model.dtos.UserLocationDto;
-import com.api.fleche.enums.StatusUserLocation;
-import com.api.fleche.model.UserLocationSession;
 import com.api.fleche.model.dtos.UserLocationSessionDto;
 import com.api.fleche.model.exception.LocationNotFoundException;
-import com.api.fleche.model.exception.UserNotFounException;
-import com.api.fleche.model.exception.UserOnlineInOtherLocalException;
 import com.api.fleche.repository.UserLocationSessionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -35,8 +33,7 @@ public class UserLocationSessionService {
     }
 
     public String findByStatusUserLocation(Long userId) {
-        String status = userLocationSessionRepository.findByUserId(userId);
-        return status;
+        return userLocationSessionRepository.findByUserId(userId);
     }
 
     public void checkin(UserLocationSessionDto userLocationSessionDto) {
@@ -59,19 +56,16 @@ public class UserLocationSessionService {
 
     public void checkout(Long userId) {
         var user = userService.findById(userId);
-        if (user.isEmpty()) {
-            throw new UserNotFounException("User not found");
-        }
-
         var location = findByLocationId(userId);
-        if (location == null) {
-            throw new LocationNotFoundException("Location not found");
-        }
-        userLocationSessionRepository.checkinOrCheckout(StatusUserLocation.OFFLINE.name(), location,  userId);
+        userLocationSessionRepository.checkinOrCheckout(StatusUserLocation.OFFLINE.name(), location, userId);
     }
 
     public Long findByLocationId(Long userId) {
-        return userLocationSessionRepository.findByLocationId(userId);
+        Long locationId = userLocationSessionRepository.findByLocationId(userId);
+        if (locationId == null) {
+            throw new LocationNotFoundException("Location not found");
+        }
+        return locationId;
     }
 
     public void save(UserLocationSession userLocationSession) {
@@ -88,13 +82,7 @@ public class UserLocationSessionService {
 
     public Page<UserLocationDto> usersOnlineList(Long userId, Pageable pageable) {
         var user = userService.findById(userId);
-        if (user.isEmpty()) {
-            throw new UserNotFounException("User not found");
-        }
-        var location = findByLocationId(user.get().getId());
-        if (location == null) {
-            throw new LocationNotFoundException("Location not found");
-        }
+        var location = findByLocationId(user.getId());
         String qrCode = qrCodeBar(location);
         return userLocationSessionDao.usuariosParaListar(qrCode, userId, pageable);
     }
@@ -104,26 +92,14 @@ public class UserLocationSessionService {
     }
 
     private String validatorStatus(UserLocationSessionDto userLocationSessionDto) {
-        var status = findByStatusUserLocation(userLocationSessionDto.getUserId());
-        if (status != null && status.equals("ONLINE")) {
-            throw new UserOnlineInOtherLocalException("User online in other local");
-        }
-        return status;
+        return findByStatusUserLocation(userLocationSessionDto.getUserId());
     }
 
     private Location validateLocation(UserLocationSessionDto userLocationSessionDto) {
-        var location = locationService.findByQrCode(userLocationSessionDto.getQrCode());
-        if (location == null) {
-            throw new LocationNotFoundException("Location not found");
-        }
-        return location;
+        return locationService.findByQrCode(userLocationSessionDto.getQrCode());
     }
 
     private User validatorUser(UserLocationSessionDto userLocationSessionDto) {
-        var user = userService.findById(userLocationSessionDto.getUserId());
-        if (user.isEmpty()) {
-            throw new UserNotFounException("User not found");
-        }
-        return user.get();
+        return userService.findById(userLocationSessionDto.getUserId());
     }
 }

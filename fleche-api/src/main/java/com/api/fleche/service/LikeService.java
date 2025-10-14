@@ -19,15 +19,15 @@ public class LikeService {
     private final LikePublisher publisher;
 
     public void like(Long originId, Long destinyId, StatusLike statusLike) {
-        Optional<User> userOrigin = userService.findById(originId);
-        Optional<User> userDestiny = userService.findById(destinyId);
+        var userOrigin = userService.findById(originId);
+        var userDestiny = userService.findById(destinyId);
 
         var userRepresentationOrigin = UserRepresentation.builder()
-                .id(userOrigin.get().getId())
+                .id(userOrigin.getId())
                 .build();
 
         var userRepresentationDestiny = UserRepresentation.builder()
-                .id(userDestiny.get().getId())
+                .id(userDestiny.getId())
                 .build();
 
         var like = new LikeRepresentation(
@@ -35,11 +35,6 @@ public class LikeService {
                 userRepresentationDestiny.getId(),
                 statusLike
         );
-
-        if (userOrigin.isEmpty() || userDestiny.isEmpty()) {
-            throw new UserNotFounException("User not found");
-        }
-
         publisher.publisherLike(like);
     }
 

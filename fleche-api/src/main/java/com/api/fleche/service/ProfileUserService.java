@@ -27,11 +27,11 @@ public class ProfileUserService {
         if (pic != null && !pic.isEmpty()) {
             profileUser.setPicture(pic.getBytes());
         }
-        profileUser.setUserId(user.get());
+        profileUser.setUserId(user);
         profilerUserRespository.save(profileUser);
     }
 
-    public Optional<ProfileUser> findByUserId(Optional<User> user) {
+    public ProfileUser findByUserId(User user) {
         return profilerUserRespository.findByUserId(user);
     }
 

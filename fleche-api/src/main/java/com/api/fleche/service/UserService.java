@@ -29,13 +29,20 @@ public class UserService {
     private static final Integer AGE = 18;
 
     @Transactional
-    public User createAccount(UserDto userDto) {
+    public UserDto createAccount(UserDto userDto) {
         var user = new User();
         String encryptedPassword = new BCryptPasswordEncoder().encode(userDto.getPassword());
         userDto.setPassword(encryptedPassword);
         BeanUtils.copyProperties(userDto, user);
         validateRegister(user);
-        return userRepository.save(user);
+        var userSave =userRepository.save(user);
+        return new UserDto(
+                userSave.getName(),
+                userSave.getEmail(),
+                userSave.getDdd(),
+                userSave.getPhone(),
+                userSave.getRole(),
+                userSave.getStatus());
     }
 
     public boolean existsByEmail(String email) {
@@ -55,13 +62,17 @@ public class UserService {
         return age.getYears() >= AGE;
     }
 
-    public Optional<User> findById(Long userId) {
-        Optional<User> user = userRepository.findById(userId);
-        return user;
+    public User findById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFounException("User not found by id: " + userId));
     }
 
     public UserDataDto findDataUser(Long id) {
-        return userDao.findDataUser(id);
+        var userData = userDao.findDataUser(id);
+        if (userData == null) {
+            throw new UserNotFounException("User not found by id: " + id);
+        }
+        return userData;
     }
 
     public LoginDto login(String emailOuNumero) {
@@ -72,9 +83,6 @@ public class UserService {
     @Modifying
     public void updateDataUser(UserUpdateDto updateDto, Long id) {
         var userData = findDataUser(id);
-        if (userData == null) {
-            throw new UserNotFounException("User not found by id: " + id);
-        }
         if (updateDto.getPhone() != null) {
             if (updateDto.getPhone().equals(userData.getPhone()) && userData.getId() != id) {
                 throw new PhoneAlreadyExistsException("Phone already exisits");
@@ -85,12 +93,12 @@ public class UserService {
                 throw new EmailAlreadyExistsException("E-mail already exists");
             }
         }
-        Optional<User> user = findById(id);
-        user.get().setName(updateDto.getName() != null ? updateDto.getName() : user.get().getName());
-        user.get().setPhone(updateDto.getPhone() != null ? updateDto.getPhone() : user.get().getPhone());
-        user.get().setEmail(updateDto.getEmail() != null ? updateDto.getEmail() : user.get().getEmail());
-        user.get().setDateOfBirth(user.get().getDateOfBirth());
-        userRepository.save(user.get());
+        User user = findById(id);
+        user.setName(updateDto.getName() != null ? updateDto.getName() : user.getName());
+        user.setPhone(updateDto.getPhone() != null ? updateDto.getPhone() : user.getPhone());
+        user.setEmail(updateDto.getEmail() != null ? updateDto.getEmail() : user.getEmail());
+        user.setDateOfBirth(user.getDateOfBirth());
+        userRepository.save(user);
     }
 
     public User findUserNotProfile(String phone) {
@@ -99,9 +107,6 @@ public class UserService {
 
     public ProfileUserDto profileUser(Long userId) {
         var user = findById(userId);
-        if (user.isEmpty()){
-            throw new UserNotFounException("User not found by id: " + userId);
-        }
         return userDao.profileUser(userId);
     }
 

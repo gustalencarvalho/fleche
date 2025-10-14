@@ -1,15 +1,15 @@
 package com.api.fleche.service;
 
 import com.api.fleche.model.Location;
-import com.api.fleche.model.dtos.LocationRegisterDto;
 import com.api.fleche.model.dtos.LocationDto;
+import com.api.fleche.model.dtos.LocationRegisterDto;
+import com.api.fleche.model.exception.LocationNotFoundException;
 import com.api.fleche.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,15 +18,24 @@ public class LocationService {
 
     private final LocationRepository locationRepository;
 
-    public Location registerBar(LocationRegisterDto locationRegisterDto) {
+    public LocationDto registerBar(LocationRegisterDto locationRegisterDto) {
         var location = new Location();
         BeanUtils.copyProperties(locationRegisterDto, location);
-        return locationRepository.save(location);
+        var locationSave = locationRepository.save(location);
+        return new LocationDto(
+                locationSave.getId(),
+                locationSave.getName(),
+                locationSave.getAddress(),
+                locationSave.getDistrict(),
+                locationSave.getCity(),
+                locationSave.getQrCode(),
+                locationSave.getCoordinate()
+        );
     }
 
     public Location findByQrCode(String qrCode) {
-        Optional<Location> location = locationRepository.findByQrCode(qrCode);
-        return location.get();
+        return locationRepository.findByQrCode(qrCode)
+                .orElseThrow(() -> new LocationNotFoundException("Location not found for QR code: " + qrCode));
     }
 
     public List<LocationDto> findAll() {
@@ -39,8 +48,7 @@ public class LocationService {
                         location.getDistrict(),
                         location.getCity(),
                         location.getQrCode(),
-                        location.getCoordinate(),
-                        null))
+                        location.getCoordinate()))
                 .collect(Collectors.toList());
     }
 

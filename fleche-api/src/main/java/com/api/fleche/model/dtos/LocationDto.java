@@ -20,4 +20,14 @@ public class LocationDto {
     private String qrCode;
     private List<String> coordinate;
     private Long usersOnline;
+
+    public LocationDto(Long id, String name, String address, String district, String city, String qrCode, List<String> coordinate) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.district = district;
+        this.city = city;
+        this.qrCode = qrCode;
+        this.coordinate = coordinate;
+    }
 }

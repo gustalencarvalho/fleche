@@ -16,7 +16,7 @@ import java.util.Map;
 @Configuration
 public class KafkaConfig {
 
-    @Value("${spring.kafka.bootstrap-servers}") // <-- Use esta chave
+    @Value("${spring.kafka.bootstrap-servers}")
     private String kafkaServerUrl;
 
     @Bean

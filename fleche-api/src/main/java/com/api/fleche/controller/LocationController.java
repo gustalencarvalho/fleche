@@ -1,7 +1,7 @@
 package com.api.fleche.controller;
 
-import com.api.fleche.model.dtos.LocationRegisterDto;
 import com.api.fleche.model.dtos.LocationDto;
+import com.api.fleche.model.dtos.LocationRegisterDto;
 import com.api.fleche.model.dtos.StandardError;
 import com.api.fleche.service.LocationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,8 +22,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "LocationController", description = "Controller responsible for register location")
 @RequestMapping("/location")
+@Tag(name = "LocationController", description = "Controller responsible for register location")
 public class LocationController {
 
     private final LocationService locationService;
@@ -41,7 +41,7 @@ public class LocationController {
                             mediaType = APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = StandardError.class)))
     })
-    public ResponseEntity<Object> registerBar(@RequestBody @Valid LocationRegisterDto locationRegisterDto) {
+    public ResponseEntity<Object> registerLocation(@RequestBody @Valid LocationRegisterDto locationRegisterDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(locationService.registerBar(locationRegisterDto));
     }
 

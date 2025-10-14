@@ -2,7 +2,6 @@ package com.api.fleche.controller;
 
 import com.api.fleche.enums.StatusLike;
 import com.api.fleche.model.dtos.StandardError;
-import com.api.fleche.publisher.representation.LikeRepresentation;
 import com.api.fleche.service.LikeService;
 import com.api.fleche.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,8 +21,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "LikeController", description = "Controller responsible for like user")
 @RequestMapping("/like")
+@Tag(name = "LikeController", description = "Controller responsible for like user")
 public class LikeController {
 
     private final LikeService likeService;
