@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.Optional;
 
 import static com.api.fleche.infra.security.SecurityFilter.getAuthenticationUserId;
 
@@ -37,7 +36,7 @@ public class UserService {
         userDto.setPassword(encryptedPassword);
         BeanUtils.copyProperties(userDto, user);
         validateRegister(user);
-        var userSave= userRepository.save(user);
+        var userSave = userRepository.save(user);
         return new UserDto(
                 userSave.getName(),
                 userSave.getEmail(),

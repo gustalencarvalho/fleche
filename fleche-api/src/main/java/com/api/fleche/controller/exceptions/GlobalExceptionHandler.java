@@ -25,7 +25,7 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(LocationNotFoundException.class)
-    ProblemDetail handleLocationNotFoundExceptionHandler(final LocationNotFoundException ex, final HttpServletRequest request) {
+    ProblemDetail handleLocationNotFoundException(final LocationNotFoundException ex, final HttpServletRequest request) {
         ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
         problem.setType(URI.create("http://localhost:8085/"));
         problem.setTitle("Location not found");
@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserNotFounException.class)
-    ProblemDetail handleUserNotFounExceptionHandler(final UserNotFounException ex, final HttpServletRequest request) {
+    ProblemDetail handleUserNotFounException(final UserNotFounException ex, final HttpServletRequest request) {
         ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
         problem.setType(URI.create("http://localhost:8085/"));
         problem.setTitle("User not found");
@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
-    ProblemDetail handleEmailAlreadyExistsHandler(final EmailAlreadyExistsException ex, final HttpServletRequest request) {
+    ProblemDetail handleEmailAlreadyExists(final EmailAlreadyExistsException ex, final HttpServletRequest request) {
         ProblemDetail problem = ProblemDetail.forStatus(CONFLICT);
         problem.setType(URI.create("http://localhost:8085/"));
         problem.setTitle("E-mail exists");
@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AgeMinNotDifinedException.class)
-    ProblemDetail handleAgeMinNotDifinedExceptionHandler(final AgeMinNotDifinedException ex, final HttpServletRequest request) {
+    ProblemDetail handleAgeMinNotDifinedException(final AgeMinNotDifinedException ex, final HttpServletRequest request) {
         ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.CONFLICT);
         problem.setType(URI.create("http://localhost:8085/"));
         problem.setTitle("User min age 18");
@@ -65,7 +65,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(PhoneAlreadyExistsException.class)
-    ProblemDetail handlePhoneAlreadyExistsExceptionHandler(final PhoneAlreadyExistsException ex, final HttpServletRequest request) {
+    ProblemDetail handlePhoneAlreadyExistsException(final PhoneAlreadyExistsException ex, final HttpServletRequest request) {
         ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.CONFLICT);
         problem.setType(URI.create("http://localhost:8085/"));
         problem.setTitle("Phone number");
@@ -75,7 +75,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    ProblemDetail handleMethodArgumentNotValidExceptionHandler(final MethodArgumentNotValidException ex, final HttpServletRequest request) {
+    ProblemDetail handleMethodArgumentNotValidException(final MethodArgumentNotValidException ex, final HttpServletRequest request) {
         ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setType(URI.create("http://localhost:8085/problems/validation-error"));
         problem.setTitle("Validation failed");
@@ -91,10 +91,30 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserOnlineInOtherLocalException.class)
-    ProblemDetail handleUserOnlineInOtherLocalExceptionHandler(final UserOnlineInOtherLocalException ex, final HttpServletRequest request) {
+    ProblemDetail handleUserOnlineInOtherLocalException(final UserOnlineInOtherLocalException ex, final HttpServletRequest request) {
         ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.CONFLICT);
         problem.setType(URI.create("http://localhost:8085/"));
         problem.setTitle("User online");
+        problem.setDetail(ex.getMessage());
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(UserNotBlockHimselfException.class)
+    ProblemDetail handleUserNotBlockHimselfException(final UserNotBlockHimselfException ex, final HttpServletRequest request) {
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+        problem.setType(URI.create("http://localhost:8085/"));
+        problem.setTitle("User block himself");
+        problem.setDetail(ex.getMessage());
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(BlockadeExistsInUsersException.class)
+    ProblemDetail handleBlockadeExistsInUsersException(final BlockadeExistsInUsersException ex, final HttpServletRequest request) {
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+        problem.setType(URI.create("http://localhost:8085/"));
+        problem.setTitle("Block between users");
         problem.setDetail(ex.getMessage());
         problem.setProperty("timestamp", Instant.now());
         return problem;

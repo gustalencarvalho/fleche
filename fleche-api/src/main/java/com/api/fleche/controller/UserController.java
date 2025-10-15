@@ -2,8 +2,10 @@ package com.api.fleche.controller;
 
 import com.api.fleche.model.User;
 import com.api.fleche.model.dtos.StandardError;
+import com.api.fleche.model.dtos.UserBlockDto;
 import com.api.fleche.model.dtos.UserDto;
 import com.api.fleche.model.dtos.UserUpdateDto;
+import com.api.fleche.service.UserBlockService;
 import com.api.fleche.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,8 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -29,7 +30,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
+    private final UserService service;
+    private final UserBlockService userBlockService;
 
     @PostMapping("/register")
     @Operation(summary = "Save new User")
@@ -45,8 +47,8 @@ public class UserController {
                             schema = @Schema(implementation = StandardError.class)))
     })
     public ResponseEntity<Object> register(@RequestBody @Valid UserDto userDto) {
-        userService.createAccount(userDto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        service.createAccount(userDto);
+        return ResponseEntity.status(CREATED).build();
     }
 
     @Operation(summary = "Get data user by id")
@@ -63,7 +65,7 @@ public class UserController {
     })
     @GetMapping("/{id}/data")
     public ResponseEntity<Object> findDataUser(@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.profileUser(id));
+        return ResponseEntity.status(HttpStatus.OK).body(service.profileUser(id));
     }
 
     @Operation(summary = "Get picture user")
@@ -80,7 +82,7 @@ public class UserController {
     })
     @GetMapping("/{id}/picture")
     public ResponseEntity<byte[]> getFoto(@PathVariable Long id) {
-        User user = userService.findById(id);
+        User user = service.findById(id);
         if (user.getProfileUser().getPicture() != null) {
             byte[] image = user.getProfileUser().getPicture();
             HttpHeaders headers = new HttpHeaders();
@@ -105,8 +107,25 @@ public class UserController {
     })
     @PatchMapping("/update")
     public ResponseEntity<?> updateDataUser(@RequestBody UserUpdateDto userUpdateDto) {
-        userService.updateDataUser(userUpdateDto);
+        service.updateDataUser(userUpdateDto);
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @Operation(summary = "Blockade user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Blockade user successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = @Content(
+                            mediaType = APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = StandardError.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(
+                            mediaType = APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = StandardError.class)))
+    })
+    @PostMapping("/block")
+    public ResponseEntity<?> blockedUser(@RequestBody UserBlockDto userBlockDto) {
+        return ResponseEntity.status(CREATED).body(userBlockService.blockaedUser(userBlockDto));
     }
 
 }

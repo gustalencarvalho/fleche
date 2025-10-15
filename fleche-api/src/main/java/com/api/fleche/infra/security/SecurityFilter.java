@@ -33,21 +33,16 @@ public class SecurityFilter extends OncePerRequestFilter {
             DecodedJWT decoded = tokenService.validateToken(token);
             Long userId = decoded.getClaim("id").asLong();
             String telefone = decoded.getSubject();
-
-            // Busca o usuário com base no id (ou telefone)
             UserDetails usuario = userRepository.findByPhone(telefone);
 
-            // Cria autenticação
             var authentication = new UsernamePasswordAuthenticationToken(
                     usuario, null, usuario.getAuthorities());
 
-            // Coloca o usuário logado no contexto de segurança
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
         filterChain.doFilter(request, response);
     }
-
 
     private String recoverToken(HttpServletRequest request) {
         var authHeader = request.getHeader("Authorization");
