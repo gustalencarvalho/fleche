@@ -37,7 +37,7 @@ public class UserBlockService {
                 userBlockDto.getReason());
     }
 
-    private void existsBlocked(User user, User blockedUser, StatusBlockade status) {
+    public void existsBlocked(User user, User blockedUser, StatusBlockade status) {
         Boolean verify = repository.existsByUserAndBlockedUserAndStatus(user, blockedUser, status);
         if (verify) {
             throw new BlockadeExistsInUsersException("There is a block between users");

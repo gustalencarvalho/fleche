@@ -91,10 +91,10 @@ public class UserLocationSessionController {
         return ResponseEntity.ok(usuarioBarDtos);
     }
 
-//    @GetMapping("/users/online")
-//    public ResponseEntity<List<LocationDto>> userssOnline() {
-//        return ResponseEntity.status(HttpStatus.OK).body(userLocationSessionService.listTotalUserBar());
-//    }
+    @GetMapping("/users/location/online")
+    public ResponseEntity<List<LocationDto>> userssOnline() {
+        return ResponseEntity.status(HttpStatus.OK).body(userLocationSessionService.listTotalUserBar());
+    }
 
     @GetMapping("/user/{userId}/authenticated")
     public ResponseEntity<Object> verifyIfUserOnline(@PathVariable Long userId) {
