@@ -8,10 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserLocationDto {
-
     private Long id;
     private String name;
     private String gender;
     private int age;
-
 }

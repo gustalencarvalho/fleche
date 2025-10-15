@@ -8,8 +8,6 @@ import lombok.Data;
 
 @Data
 public class UserBlockDto {
-    @NotNull(message = "Id user is required")
-    private Long userId;
 
     @NotNull(message = "Id user blockade is required")
     private Long userIdBlockade;

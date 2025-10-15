@@ -124,8 +124,25 @@ public class UserController {
                             schema = @Schema(implementation = StandardError.class)))
     })
     @PostMapping("/block")
-    public ResponseEntity<?> blockedUser(@RequestBody UserBlockDto userBlockDto) {
+    public ResponseEntity<?> blockeadUser(@RequestBody @Valid UserBlockDto userBlockDto) {
         return ResponseEntity.status(CREATED).body(userBlockService.blockaedUser(userBlockDto));
+    }
+
+    @Operation(summary = "Remove block user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Rmove block user successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = @Content(
+                            mediaType = APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = StandardError.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(
+                            mediaType = APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = StandardError.class)))
+    })
+    @PatchMapping("/remove/block/{userIdDesblock}")
+    public ResponseEntity<?> removeBlockUser(@PathVariable Long userIdDesblock) {
+        return ResponseEntity.status(CREATED).body(userBlockService.removeBlock(userIdDesblock));
     }
 
 }

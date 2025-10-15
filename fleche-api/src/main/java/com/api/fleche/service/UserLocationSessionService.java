@@ -19,6 +19,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
+import static com.api.fleche.infra.security.SecurityFilter.getAuthenticationUserId;
+
 @Service
 @RequiredArgsConstructor
 public class UserLocationSessionService {
@@ -36,10 +38,10 @@ public class UserLocationSessionService {
         return userLocationSessionRepository.findByUserId(userId);
     }
 
-    public void checkin(UserLocationSessionDto userLocationSessionDto) {
-        var status = validatorStatus(userLocationSessionDto);
-        var location = validateLocation(userLocationSessionDto);
-        var user = validatorUser(userLocationSessionDto);
+    public void checkin(String qrCode) {
+        var status = validatorStatus(getAuthenticationUserId());
+        var location = validateLocation(qrCode);
+        var user = validatorUser(getAuthenticationUserId());
         var userLocationSessaoModel = new UserLocationSession();
         userLocationSessaoModel.setLocation(location);
         userLocationSessaoModel.setUser(user);
@@ -76,30 +78,30 @@ public class UserLocationSessionService {
         return userLocationSessionRepository.qrCodeBar(locationId);
     }
 
-    public List<LocationDto> listTotalUserBar(Long userId) {
-        return userLocationSessionDao.listarTotalUsuariosPorBar(userId);
+    public List<LocationDto> listTotalUserBar() {
+        return userLocationSessionDao.listarTotalUsuariosPorBar(getAuthenticationUserId());
     }
 
-    public Page<UserLocationDto> usersOnlineList(Long userId, Pageable pageable) {
-        var user = userService.findById(userId);
+    public List<UserLocationDto> usersOnlineList() {
+        var user = userService.findById(getAuthenticationUserId());
         var location = findByLocationId(user.getId());
         String qrCode = qrCodeBar(location);
-        return userLocationSessionDao.usuariosParaListar(qrCode, userId, pageable);
+        return userLocationSessionDao.usuariosParaListar(qrCode, getAuthenticationUserId());
     }
 
     public String verifyIfUserOnline(Long userId) {
         return userLocationSessionRepository.verifyIfUserOnline(userId);
     }
 
-    private String validatorStatus(UserLocationSessionDto userLocationSessionDto) {
-        return findByStatusUserLocation(userLocationSessionDto.getUserId());
+    private String validatorStatus(Long userId) {
+        return findByStatusUserLocation(userId);
     }
 
-    private Location validateLocation(UserLocationSessionDto userLocationSessionDto) {
-        return locationService.findByQrCode(userLocationSessionDto.getQrCode());
+    private Location validateLocation(String qrCode) {
+        return locationService.findByQrCode(qrCode);
     }
 
-    private User validatorUser(UserLocationSessionDto userLocationSessionDto) {
-        return userService.findById(userLocationSessionDto.getUserId());
+    private User validatorUser(Long userId) {
+        return userService.findById(userId);
     }
 }
