@@ -4,14 +4,9 @@ import com.api.fleche.model.dtos.LocationDto;
 import com.api.fleche.model.dtos.UserLocationDto;
 import com.api.fleche.repository.CommandSqlRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -36,16 +31,16 @@ public class UserLocationSessionDao {
 
     public List<LocationDto> listarTotalUsuariosPorBar(Long usuarioId) {
         String sql = commandSqlRepository.usersOnline().getCmdSql();
-
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
-            LocationDto dto = new LocationDto();
-            dto.setId(rs.getLong("LOCATION_ID"));
-            dto.setName(rs.getString("NAME"));
-            dto.setAddress(rs.getString("ADDRESS"));
-            dto.setDistrict(rs.getString("DISTRICT"));
-            dto.setCity(rs.getString("CITY"));
-            dto.setQrCode(rs.getString("QR_CODE"));
-            dto.setUsersOnline(rs.getLong("TOTAL_USUARIOS"));
+            LocationDto dto = LocationDto.builder()
+                    .id(rs.getLong("LOCATION_ID"))
+                    .name(rs.getString("NAME"))
+                    .address(rs.getString("ADDRESS"))
+                    .district(rs.getString("DISTRICT"))
+                    .city(rs.getString("CITY"))
+                    .qrCode(rs.getString("QR_CODE"))
+                    .usersOnline(rs.getLong("TOTAL_USUARIOS"))
+                    .build();
             return dto;
         }, usuarioId);
     }

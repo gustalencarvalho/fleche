@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: eurekaserver
+  security:
+    user:
+      name: fleche-eureka-user
+      password: uelsem-ahh--orndcaa
+
+server:
+  port: 8761
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false

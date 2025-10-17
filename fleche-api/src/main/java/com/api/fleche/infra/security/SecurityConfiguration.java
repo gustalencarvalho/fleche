@@ -34,7 +34,7 @@ public class SecurityConfiguration {
                                 "/v3/api-docs",
                                 "/webjars/**",
                                 "/swagger-resources/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/user/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/user/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/user/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/session/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/session/**").hasRole("ADMIN")

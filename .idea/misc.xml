@@ -6,6 +6,8 @@
       <list>
         <option value="$PROJECT_DIR$/like-api/pom.xml" />
         <option value="$PROJECT_DIR$/fleche-api/pom.xml" />
+        <option value="$PROJECT_DIR$/fleche-gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/eureka-server/pom.xml" />
       </list>
     </option>
   </component>

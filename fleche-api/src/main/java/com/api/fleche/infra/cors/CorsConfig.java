@@ -16,11 +16,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.setAllowedOrigins(List.of(
-                "http://localhost:8100",
-                "http://localhost:8101",
-                "http://192.168.0.103:8101",
-                "http://localhost",
-                "http://host.docker.internal:8100"
+                "http://localhost:8080"
         ));
         config.addAllowedHeader("*");
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));

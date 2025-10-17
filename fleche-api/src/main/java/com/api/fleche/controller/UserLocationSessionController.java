@@ -29,8 +29,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping("/session")
-@Tag(name = "UserLocationSessionController", description = "Controller responsible for check-in/check-out in user")
 @RequiredArgsConstructor
+@Tag(name = "UserLocationSessionController", description = "Controller responsible for check-in/check-out in user and others")
 public class UserLocationSessionController {
 
     private final UserLocationSessionService userLocationSessionService;
@@ -91,6 +91,18 @@ public class UserLocationSessionController {
         return ResponseEntity.ok(usuarioBarDtos);
     }
 
+    @Operation(summary = "Users location online list")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Users location online"),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = @Content(
+                            mediaType = APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = StandardError.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(
+                            mediaType = APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = StandardError.class)))
+    })
     @GetMapping("/users/location/online")
     public ResponseEntity<List<LocationDto>> userssOnline() {
         return ResponseEntity.status(HttpStatus.OK).body(userLocationSessionService.listTotalUserBar());
